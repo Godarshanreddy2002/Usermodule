@@ -44,7 +44,7 @@ export async function getUser(phoneNo: string) :Promise<{data:any,error:any}>{
  * @returns -- It will return updated user profile or Response object
  */
 
-export async function updateProfile(profile: UserProfile, user_id: string) :Promise<{data:any,error:any}>{
+export async function updateProfile(profile: UserProfile, user_id: string): Promise<{ data: any, error: any }> {
   const { data, error } = await supabase
     .from(TABLE_NAMES.USER_TABLE)
     .update(profile)
@@ -53,8 +53,9 @@ export async function updateProfile(profile: UserProfile, user_id: string) :Prom
     .or(`lockout_time.lt.${new Date().toISOString()},lockout_time.is.null`)
     .select("*")
     .maybeSingle();
-    return { data, error };
+  return { data, error };
 }
+
 /**
  * This method is used to update user lockout_time, account_status, faild _login_count based on user_id
  * 
@@ -118,4 +119,57 @@ export async function updateUserStatus(user_Id: string,account_status:string) :P
     .select('*')
     .maybeSingle();
     return { data, error };
+}
+
+
+
+
+/**
+ * This method is used to update total_otps_last_5_min limit to 0
+ */
+
+export async function updateEveryFiveMinuteOtpCount()
+{
+  const {data,error}=await supabase
+  .from('otp_limits')
+  .update({
+    'total_otps_last_5_min':0,
+    'last_updated':new Date(),    
+  })
+  console.log(new Date(),"Otp count for five minutes is set 0")
+}
+
+/**
+ * This method is used to update OTP limit every day to 0
+ */
+export async function updateEveryDayOtpCount()
+{
+  const {data,error}=await supabase
+  .from('otp_limits')
+  .update({
+    'total_otps_last_5_min':0,
+    'total_otps_per_day':0,
+    'last_updated':new Date(),    
+  })
+  console.log(new Date(),"Otp count for otp is set to 0")
+}
+
+export async function CheckFollower(user_Id:string,follower_id:string):Promise<{data:any,error:any}>
+{
+    const {data,error}=await supabase
+    .from('followers')
+    .eq('user_id',user_Id)
+    .eq('follower_id')
+    .maybeSingle()
+    return {data,error}
+}
+export async function addFollowerToUser(user_Id:string,follower_id:string):Promise<{data:any,error:any}>
+{
+  const {data,error}=await supabase
+  .from('followers')
+  .insert({user_Id,follower_id})
+  .maybeSingle();
+
+
+  return {data,error}
 }
