@@ -154,22 +154,34 @@ export async function updateEveryDayOtpCount()
   console.log(new Date(),"Otp count for otp is set to 0")
 }
 
-export async function CheckFollower(user_Id:string,follower_id:string):Promise<{data:any,error:any}>
+export async function CheckFollower(user_id:string,follower_id:string):Promise<{data:any,error:any}>
 {
     const {data,error}=await supabase
     .from('followers')
-    .eq('user_id',user_Id)
-    .eq('follower_id')
+    .select("*")
+    .eq('user_id',user_id)
+    .eq('follower_id',follower_id)
     .maybeSingle()
     return {data,error}
 }
-export async function addFollowerToUser(user_Id:string,follower_id:string):Promise<{data:any,error:any}>
+export async function addFollowerToUser(user_id:string,follower_id:string):Promise<{data:any,error:any}>
 {
   const {data,error}=await supabase
   .from('followers')
-  .insert({user_Id,follower_id})
+  .insert({'user_id':user_id,'follower_id':follower_id})
+  .select()
+  // .neq('follower_id',follower_id)
   .maybeSingle();
-
-
   return {data,error}
+}
+export async function updateFollowerCount(user_id:string,follower_count:number) 
+{
+  const { data, error } = await supabase
+    .from(TABLE_NAMES.USER_TABLE)
+    .update({ 'follower_count':follower_count})
+    .eq('user_id', user_id)
+    .select("follower_count")
+    .maybeSingle();  
+
+    return {data,error}
 }

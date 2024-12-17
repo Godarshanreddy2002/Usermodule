@@ -6,6 +6,7 @@ export const USER_MODULE_ROUTES = {
     FETCH_USER: "/UserModule/FetchUser/:id",
     ACTIVATE_OR_DEACTIVATE_USER: "/UserModule/ActivateOrDeactivate/:id",
     USER_LOGOUT: "/UserModule/LogOut/:scope",
+    ADD_FOLLOWER:"/UserModule/addDFollower/:id",
   };
 //Meme Module Routes Path
 export const MEME_ROUTES ={
